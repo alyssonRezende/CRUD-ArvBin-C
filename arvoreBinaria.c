@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
+    #define clear "clear"
+    #define pause pause
+#elif __linux__
+    #define clear "clear"
+    #define pause "read -p 'Pressione enter para continuar...' var"
+#endif
 struct No {
     int num;
     struct No *esq;
@@ -225,7 +232,7 @@ int main() {
 
     int op;
     do {
-        system("cls");
+        system(clear);
         printf("O que deseja: \n");
         printf("1 - Comprar ingressos\n");
         printf("2 - Exibir arvore pre-order\n");
@@ -239,43 +246,43 @@ int main() {
 
         switch (op) {
         case 1:
-            system("cls");
+            system(clear);
             comprarIngresso(raiz);
-            system("pause");
+            system(pause);
             break;
         case 2:
-            system("cls");
+            system(clear);
             exibe_preOrder(raiz);
-            system("pause");
+            system(pause);
             break;
         case 3:
-            system("cls");
+            system(clear);
             exibe_inOrder(raiz);
-            system("pause");
+            system(pause);
             break;
         case 4:
-            system("cls");
+            system(clear);
             exibe_posOrder(raiz);
-            system("pause");
+            system(pause);
             break;
         case 5:
-            system("cls");
+            system(clear);
          exibe = contaNo(*raiz);
             printf("A arvore possui %i nodes\n\n", exibe);
-            system("pause");
+            system(pause);
             break;
         case 6:
-            system("cls");
+            system(clear);
          exibe = altura(*raiz);
             printf("A altura da arvore e %i\n\n", exibe);
-            system("pause");
+            system(pause);
             break;
         case 7:
-            system("cls");
+            system(clear);
             printf("Digite o numero que deseja deletar: ");
             scanf("%d", &num);
             deletar(raiz, num);
-            system("pause");
+            system(pause);
             break;
         default:
             printf("Numero invalido");
