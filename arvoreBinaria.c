@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #ifdef _WIN32
-    #define clear "clear"
+    #define clear "cls"
     #define pause pause
 #elif __linux__
     #define clear "clear"
