@@ -245,6 +245,8 @@ int main() {
         scanf("%d", &op);
 
         switch (op) {
+        case 0:
+            break;
         case 1:
             system(clear);
             comprarIngresso(raiz);
