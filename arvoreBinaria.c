@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #ifdef _WIN32
-    #define clear "clear"
+    #define clear "cls"
     #define pause pause
 #elif __linux__
     #define clear "clear"
@@ -245,6 +245,8 @@ int main() {
         scanf("%d", &op);
 
         switch (op) {
+        case 0:
+            break;
         case 1:
             system(clear);
             comprarIngresso(raiz);
