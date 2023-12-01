@@ -170,7 +170,7 @@ void deletar(ArvBin *raiz) {
     scanf("%d", &num);
 
     if (*raiz == NULL) {
-        printf( RED "Mao foi possivel cancelar a compra, pois o ingresso nao foi vendido\n\nOu ja foi cancelado\n\n" COLOR_RESET );
+        printf(RED "Mao foi possivel cancelar a compra, pois o ingresso nao foi vendido\n\nOu ja foi cancelado\n\n" COLOR_RESET);
         return;
     }
 
@@ -189,7 +189,7 @@ void deletar(ArvBin *raiz) {
     }
 
     if (atual == NULL) {
-        printf( RED "Nao foi possivel cancelar a compra, pois o ingresso nao foi vendido\n\nOu ja foi cancelado\n\n" COLOR_RESET );
+        printf(RED "Nao foi possivel cancelar a compra, pois o ingresso nao foi vendido\n\nOu ja foi cancelado\n\n" COLOR_RESET);
         return;
     }
 
@@ -200,39 +200,42 @@ void deletar(ArvBin *raiz) {
             } else {
                 pai->dir = NULL;
             }
+            free(atual);
         } else {
             free(*raiz);
             *raiz = NULL;
         }
-        free(atual);
     } else if (atual->esq != NULL && atual->dir != NULL) {
-        no *sucessor = atual->dir;
-        pai = NULL;
-        while (sucessor->esq != NULL) {
-            pai = sucessor;
-            sucessor = sucessor->esq;
-        }
-        atual->num = sucessor->num;
-        if (pai != NULL) {
-            pai->esq = NULL;
-        } else {
-            atual->dir = sucessor->dir;
-        }
-        free(sucessor);
-    } else {
-        no *filho = (atual->esq != NULL) ? atual->esq : atual->dir;
-        if (pai != NULL) {
-            if (pai->esq == atual) {
-                pai->esq = filho;
-            } else {
-                pai->dir = filho;
+    no *sucessor = atual->dir;
+            pai = NULL;
+            while (sucessor->esq != NULL) {
+                pai = sucessor;
+                sucessor = sucessor->esq;
             }
-        } else {
-            *raiz = filho;
-        }
-        free(atual);
-    }
-    printf( GRN "Compra cancelada com sucesso!\n\n" COLOR_RESET );
+            atual->num = sucessor->num;
+            if (pai != NULL) {
+                pai->esq = NULL;
+            } else {
+                atual->dir = sucessor->dir;
+            }
+            free(sucessor);    
+    } 
+    else 
+    {
+    no *filho = (atual->esq != NULL) ? atual->esq : atual->dir;
+            if (pai != NULL) {
+                if (pai->esq == atual) {
+                    pai->esq = filho;
+                } else {
+                    pai->dir = filho;
+                }
+            } else {
+                *raiz = filho;
+            }
+            free(atual);    
+            }
+
+    printf(GRN "Compra cancelada com sucesso!\n\n" COLOR_RESET);
 }
 
 void espacamento(char ch, int n){
@@ -583,8 +586,7 @@ int main() {
             case 5:
                 system(clear);
                 deletar(&raiz);
-                if(!estaBalanceada(&raiz)) 
-                    balancear(&raiz);
+                balancear(&raiz);
                 system(pause); 
                 break;
             case 7:
