@@ -39,10 +39,10 @@ ArvBin criarArvore() {
 void comprarIngresso(ArvBin *raiz) {
     no *novo = (no *)malloc(sizeof(no));
     if (novo == NULL) {
-        printf("Sem memoria disponivel!\n");
+        printf( RED "Sem memoria disponivel!\n" COLOR_RESET);
         exit(0);
     }
-    printf("--- BEM VINDO A COMPRA DE INGRESSOS ---\n\n");
+    printf( BOLD_WHT "--- BEM VINDO A COMPRA DE INGRESSOS ---\n\n");
     printf("Digite o numero do ingresso: ");
     scanf("%d", &novo->num);
     novo->dir = NULL;
@@ -63,7 +63,7 @@ void comprarIngresso(ArvBin *raiz) {
             ant = atual;
 
             if (novo->num == atual->num) {
-                printf("\n\e[0;31mPoltrona ja ocupada!\e[0m\n\n");
+                printf( RED "\nPoltrona ja ocupada!\n" COLOR_RESET );
                 free(novo);
                 return;
             }
@@ -79,7 +79,7 @@ void comprarIngresso(ArvBin *raiz) {
             ant->esq = novo;
         }
     }
-    printf("\n\e[0;32mIngresso comprado com sucesso!\e[0m\n\n");
+    printf( GRN "\nIngresso comprado com sucesso!\n\n" COLOR_RESET);
 }
 
 void libera_NO(no *no_liberar) {
@@ -145,9 +145,9 @@ int altura(ArvBin raiz){
 ArvBin encontrar(ArvBin raiz, int num) {
     if (raiz != NULL) {
         if (num == raiz->num) {
-            printf("\nA poltrona %d ja esta reservada!\n", raiz->num);
+            printf( RED "\nA poltrona %d ja esta reservada!\n" COLOR_RESET, raiz->num);
         } else {
-            printf("\nA poltrona %d se encontra disponivel para compra!\n", num);
+            printf( GRN "\nA poltrona %d se encontra disponivel para compra!\n" COLOR_RESET, num);
         }
         if (num < raiz->num) {
             return encontrar(raiz->esq, num);
@@ -165,7 +165,7 @@ void deletar(ArvBin *raiz) {
     scanf("%d", &num);
 
     if (*raiz == NULL) {
-        printf("nao foi possivel cancelar a compra, pois o ingresso nao foi vendido\n\nOu ja foi cancelado\n\n");
+        printf( RED "Mao foi possivel cancelar a compra, pois o ingresso nao foi vendido\n\nOu ja foi cancelado\n\n" COLOR_RESET );
         return;
     }
 
@@ -184,7 +184,7 @@ void deletar(ArvBin *raiz) {
     }
 
     if (atual == NULL) {
-        printf("nao foi possivel cancelar a compra, pois o ingresso nao foi vendido\n\nOu ja foi cancelado\n\n");
+        printf( RED "Nao foi possivel cancelar a compra, pois o ingresso nao foi vendido\n\nOu ja foi cancelado\n\n" COLOR_RESET );
         return;
     }
 
@@ -227,7 +227,7 @@ void deletar(ArvBin *raiz) {
         }
         free(atual);
     }
-    printf("Compra cancelada com sucesso!\n\n");
+    printf( GRN "Compra cancelada com sucesso!\n\n" COLOR_RESET );
 }
 
 
@@ -245,7 +245,7 @@ typedef node *LISTA;
 LISTA insereFinal(LISTA lista, int num) {
     node *novo = (node *)malloc(sizeof(node));
     if (novo == NULL) {
-        printf("Erro de alocacao...\n");
+        printf( RED "Erro de alocacao...\n" COLOR_RESET);
         exit(0);
     }
 
@@ -303,6 +303,7 @@ LISTA copiaParaLista(ArvBin raiz, LISTA lista) {
     return lista;
 }
 
+
 /*------------------- MÉTODOS DE BALANCEAMENTO ----------------------*/
 
 ArvBin criarNo(int num) {
@@ -312,7 +313,7 @@ ArvBin criarNo(int num) {
         novo->esq = NULL;
         novo->dir = NULL;
     } else {
-        printf("Erro de alocação...");
+        printf( RED "Erro de alocação..." COLOR_RESET );
         exit(0);
     }
     return novo;
@@ -367,8 +368,10 @@ void balancear(ArvBin *raiz){
     lista = copiaParaLista(*raiz, lista);
 
     *raiz = reconstruirBalanceada(lista);   
-    printf("Arvore balanceada com sucesso!\n");
+    printf( GRN "Arvore balanceada com sucesso!\n" COLOR_RESET );
 }
+
+/*------------------- OUTROS MÉTODOS E MAIN ----------------------*/
 
 no *encontrarNo(ArvBin raiz, int num) {
     if (raiz == NULL) {
@@ -393,7 +396,7 @@ void editarPoltrona(ArvBin *raiz) {
     no *noEditar = encontrarNo(*raiz, poltronaAntiga);
 
     if (noEditar == NULL) {
-        printf("\nPoltrona nao encontrada!\n");
+        printf( RED "\nPoltrona nao encontrada!\n" COLOR_RESET );
         return;
     }
 
@@ -421,7 +424,7 @@ void editarPoltrona(ArvBin *raiz) {
             ant = tmp;
 
             if (novo->num == tmp->num) {
-                printf( "\x1b[31m" "\n \e A poltrona ja esta ocupada!\e\n\n" "\e[0;37m");
+                printf( RED "\n \e A poltrona ja esta ocupada!\e\n\n" COLOR_RESET);
                 free(novo);
                 return;
             }
@@ -497,9 +500,7 @@ void editarPoltrona(ArvBin *raiz) {
         free(atual);
     }
 
-    
-
-    printf("\nPoltrona editada com sucesso!\n");
+    printf( GRN "\nPoltrona editada com sucesso!\n" COLOR_RESET);
 }
 
 int main() {
@@ -510,7 +511,7 @@ int main() {
     int op;
     do {
         system(clear);
-        printf("---  MENU TEATRO --- \n\n");
+        printf(BOLD_WHT "---  MENU TEATRO --- \n\n" COLOR_RESET);
         printf("1 - Comprar ingresso\n");
         printf("2 - Exibir ingressos ja reservados\n");
         printf("3 - Buscar poltrona\n");
@@ -535,7 +536,7 @@ int main() {
                 break;
             case 2:
                 system(clear);
-                printf("--- INGRESSOS VENDIDOS ---\n\n");
+                printf( BOLD_WHT "--- INGRESSOS VENDIDOS ---\n\n" COLOR_RESET);
                 exibe_inOrder(raiz);
                 printf("\n\n");
                 system(pause);
@@ -560,9 +561,9 @@ int main() {
             case 7:
                 system(clear);
                 if(estaBalanceada(&raiz))
-                    printf( "\u001b[32m" "\n \e Esta balanceada! \e\n\n" "\e[0;37m");
+                    printf( GRN "\nEsta balanceada!\n\n" COLOR_RESET);
                 else
-                    printf( "\x1b[31m" "\n \e Nao esta balanceada! \e\n\n" "\e[0;37m");
+                    printf( RED "\nNao esta balanceada!\n\n" COLOR_RESET);
                 system(pause);
                 break;
             case 8:
@@ -581,7 +582,7 @@ int main() {
                 system(pause);
                 break;
             default:
-                printf("Numero invalido");
+                printf(RED "Numero invalido" COLOR_RESET);
         }
     } while (op != 0);
 
