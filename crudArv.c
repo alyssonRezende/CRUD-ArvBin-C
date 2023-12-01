@@ -149,24 +149,18 @@ ArvBin encontrar(ArvBin raiz, int num) {
     }
 
     if (raiz != NULL) {
-        
-    
-    
-    if (num < raiz->num) {
+        if (num < raiz->num) {
             return encontrar(raiz->esq, num);
         } else if (num > raiz->num) {
             return encontrar(raiz->dir, num);
-        }
-        if (num == raiz->num) {
-            printf( RED "\nA poltrona %d ja esta reservada!\n" COLOR_RESET, raiz->num);
+        } else {
+            printf(RED "\nA poltrona %d ja esta reservada!\n" COLOR_RESET, raiz->num);
             return raiz;
-        
-    }else {
-        printf( GRN "\nA poltrona %d esta disponivel para compra!\n" COLOR_RESET, num);
-        return raiz;
+        }
+    } else {
+        printf(GRN "\nA poltrona %d esta disponivel para compra!\n" COLOR_RESET, num);
+        return NULL;
     }
-    return raiz;
-}
 }
 
 void deletar(ArvBin *raiz) {
