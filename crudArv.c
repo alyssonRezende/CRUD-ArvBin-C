@@ -317,6 +317,138 @@ void balancear(ArvBin *raiz){
     printf("Arvore balanceada com sucesso!\n");
 }
 
+no *encontrarNo(ArvBin raiz, int num) {
+    if (raiz == NULL) {
+        return NULL;
+    } else {
+        if (num == raiz->num) {
+            return raiz;
+        } else if (num < raiz->num) {
+            return encontrarNo(raiz->esq, num);
+        } else {
+            return encontrarNo(raiz->dir, num);
+        }
+    }
+}
+
+void editarPoltrona(ArvBin *raiz) {
+    int poltronaAntiga, novaPoltrona;
+
+    printf("Digite o numero da poltrona que deseja editar: ");
+    scanf("%d", &poltronaAntiga);
+
+    no *noEditar = encontrarNo(*raiz, poltronaAntiga);
+
+    if (noEditar == NULL) {
+        printf("\nPoltrona nao encontrada!\n");
+        return;
+    }
+
+    printf("\nDigite o novo numero para a poltrona: ");
+    scanf("%d", &novaPoltrona);
+
+    // Inserir a nova poltrona
+    no *novo = (no *)malloc(sizeof(no));
+    novo->num = novaPoltrona;
+    novo->dir = NULL;
+    novo->esq = NULL;
+
+    if (novo->num <= 0 || novo->num > 101) {
+        printf("\n\e[0;31mIngresso indisponivel,\e[0m escolha uma poltrona de 1 a 100!\n\n");
+        free(novo);
+        return;
+    }
+
+    if (*raiz == NULL) {
+        *raiz = novo;
+    } else {
+        no *tmp = *raiz;
+        no *ant = NULL;
+        while (tmp != NULL) {
+            ant = tmp;
+
+            if (novo->num == tmp->num) {
+                printf("\n\e[0;31mPoltrona ja ocupada!\e[0m\n\n");
+                free(novo);
+                return;
+            }
+            if (novo->num > tmp->num) {
+                tmp = tmp->dir;
+            } else {
+                tmp = tmp->esq;
+            }
+        }
+        if (novo->num > ant->num) {
+            ant->dir = novo;
+        } else {
+            ant->esq = novo;
+        }
+    }
+
+    // Excluir a poltrona antiga
+    no *atual = *raiz;
+    no *pai = NULL;
+    while (atual != NULL) {
+        if (poltronaAntiga == atual->num) {
+            break;
+        }
+        pai = atual;
+        if (poltronaAntiga < atual->num) {
+            atual = atual->esq;
+        } else {
+            atual = atual->dir;
+        }
+    }
+
+    if (atual == NULL) {
+        return;
+    }
+
+    if (atual->esq == NULL && atual->dir == NULL) {
+        if (pai != NULL) {
+            if (pai->esq == atual) {
+                pai->esq = NULL;
+            } else {
+                pai->dir = NULL;
+            }
+        } else {
+            free(*raiz);
+            *raiz = NULL;
+        }
+        free(atual);
+    } else if (atual->esq != NULL && atual->dir != NULL) {
+        no *sucessor = atual->dir;
+        pai = NULL;
+        while (sucessor->esq != NULL) {
+            pai = sucessor;
+            sucessor = sucessor->esq;
+        }
+        atual->num = sucessor->num;
+        if (pai != NULL) {
+            pai->esq = NULL;
+        } else {
+            atual->dir = sucessor->dir;
+        }
+        free(sucessor);
+    } else {
+        no *filho = (atual->esq != NULL) ? atual->esq : atual->dir;
+        if (pai != NULL) {
+            if (pai->esq == atual) {
+                pai->esq = filho;
+            } else {
+                pai->dir = filho;
+            }
+        } else {
+            *raiz = filho;
+        }
+        free(atual);
+    }
+
+    
+
+    printf("\nPoltrona editada com sucesso!\n");
+}
+
 int main() {
     ArvBin raiz = criarArvore();
 
@@ -361,7 +493,7 @@ int main() {
                 break;
             case 4:
                 system(clear);
-                // Implementar função de editar poltronas - excluir e adicionar, arrumar campos de texto
+                editarPoltrona(&raiz);
                 balancear(&raiz);
                 system(pause);
                 break;
