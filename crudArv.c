@@ -9,6 +9,13 @@
     #define pause "read -p 'Pressione enter para continuar...' var"
 #endif
 
+#define COLOR_RESET "\e[0m"
+#define RED "\e[0;31m"
+#define GRN "\e[0;32m"
+#define BOLD_WHT "\e[1;37m"
+
+/*-------------- ESTRUTURA PARA ARVORE BINÁRIA --------------*/
+
 struct No {
     int num;
     struct No *esq;
@@ -92,6 +99,16 @@ void libera_ArvBin(ArvBin *raiz) {
     free(*raiz);
 }
 
+void exibe_preOrder(ArvBin* raiz) {
+
+    if (*raiz == NULL) {
+        return;
+    }
+    printf("%d\n", (*raiz)->num);
+    exibe_preOrder(&((*raiz)->esq));
+    exibe_preOrder(&((*raiz)->dir));
+}
+
 void exibe_inOrder(ArvBin raiz) {
     if (raiz == NULL) {
         return;
@@ -99,6 +116,30 @@ void exibe_inOrder(ArvBin raiz) {
     exibe_inOrder(raiz->esq);
     printf(" - %d ", raiz->num);
     exibe_inOrder(raiz->dir);
+}
+
+void exibe_posOrder(ArvBin* raiz) {
+    if (*raiz == NULL) {
+        return;
+    }
+    exibe_posOrder(&((*raiz)->esq));
+    exibe_posOrder(&((*raiz)->dir));
+    printf("%d\n", (*raiz)->num);
+}
+
+int altura(ArvBin raiz){
+    if(raiz == NULL){
+        return -1;
+    }
+    else{
+        int esq = altura(raiz->esq);
+        int dir = altura(raiz->dir);
+        if (esq>dir){
+            return esq + 1;
+        }else{
+            return dir + 1;
+        }
+    }
 }
 
 ArvBin encontrar(ArvBin raiz, int num) {
@@ -189,6 +230,9 @@ void deletar(ArvBin *raiz) {
     printf("Compra cancelada com sucesso!\n\n");
 }
 
+
+/*-------------- ESTRUTURA PARA LISTA DE BALANCEAMENTO ESTÁTICO --------------*/ 
+
 struct Node {
     int num;
     struct Node *prox;
@@ -259,6 +303,7 @@ LISTA copiaParaLista(ArvBin raiz, LISTA lista) {
     return lista;
 }
 
+/*------------------- MÉTODOS DE BALANCEAMENTO ----------------------*/
 
 ArvBin criarNo(int num) {
     ArvBin novo = (ArvBin)malloc(sizeof(no));
@@ -271,6 +316,14 @@ ArvBin criarNo(int num) {
         exit(0);
     }
     return novo;
+}
+
+int estaBalanceada(ArvBin *raiz) {
+    int highDif = altura((*raiz)->dir) - altura((*raiz)->esq);
+    printf("A diferenca de altura das sub-arvores e de: %d\n", highDif);
+    if(highDif < (-1) || highDif > 1)
+        return 0;
+    return 1;
 }
 
 ArvBin construirArvoreBalanceada(int *array, int inicio, int fim) {
@@ -368,7 +421,7 @@ void editarPoltrona(ArvBin *raiz) {
             ant = tmp;
 
             if (novo->num == tmp->num) {
-                printf("\n\e[0;31mPoltrona ja ocupada!\e[0m\n\n");
+                printf( "\x1b[31m" "\n \e A poltrona ja esta ocupada!\e\n\n" "\e[0;37m");
                 free(novo);
                 return;
             }
@@ -463,7 +516,10 @@ int main() {
         printf("3 - Buscar poltrona\n");
         printf("4 - Editar poltrona\n");
         printf("5 - Cancelar compra\n");
-        // printf("7 - Teste de balanceamento\n");
+        printf("7 - Teste de balanceamento\n");
+        printf("8 - Exibe preOrdem\n");
+        printf("9 - Exibe inOrdem\n");
+        printf("10 - Exibe posOrdem\n");
         printf("0 - Encerrar\n");
         scanf("%d", &op);
 
@@ -473,6 +529,8 @@ int main() {
             case 1:
                 system(clear);
                 comprarIngresso(&raiz);
+                if(!estaBalanceada(&raiz)) // verifica o balanceamento a cada inserção
+                    balancear(&raiz);
                 system(pause);
                 break;
             case 2:
@@ -480,7 +538,6 @@ int main() {
                 printf("--- INGRESSOS VENDIDOS ---\n\n");
                 exibe_inOrder(raiz);
                 printf("\n\n");
-                balancear(&raiz);
                 system(pause);
                 break;
             case 3:
@@ -488,24 +545,39 @@ int main() {
                 printf("Digite o numero que deseja buscar: ");
                 scanf("%d", &num);
                 encontrar(raiz, num);
-                balancear(&raiz);
                 system(pause);
                 break;
             case 4:
                 system(clear);
                 editarPoltrona(&raiz);
-                balancear(&raiz);
                 system(pause);
                 break;
             case 5:
                 system(clear);
                 deletar(&raiz);
-                balancear(&raiz);
-                system(pause);
+                system(pause); 
                 break;
             case 7:
                 system(clear);
-                balancear(&raiz);
+                if(estaBalanceada(&raiz))
+                    printf( "\u001b[32m" "\n \e Esta balanceada! \e\n\n" "\e[0;37m");
+                else
+                    printf( "\x1b[31m" "\n \e Nao esta balanceada! \e\n\n" "\e[0;37m");
+                system(pause);
+                break;
+            case 8:
+                system(clear);
+                exibe_preOrder(&raiz);
+                system(pause);
+                break;
+            case 9:
+                system(clear);
+                exibe_inOrder(raiz);
+                system(pause);
+                break;
+            case 10:
+                system(clear);
+                exibe_posOrder(&raiz);
                 system(pause);
                 break;
             default:
