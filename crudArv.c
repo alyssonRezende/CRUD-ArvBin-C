@@ -29,7 +29,7 @@ ArvBin criarArvore() {
     return raiz;
 }
 
-void comprarIngresso(ArvBin* raiz) {
+void comprarIngresso(ArvBin *raiz) {
     no *novo = (no *)malloc(sizeof(no));
     if (novo == NULL) {
         printf("Sem memoria disponivel!\n");
@@ -85,60 +85,36 @@ void libera_NO(no *no_liberar) {
     }
 }
 
-void libera_ArvBin(ArvBin* raiz) {
+void libera_ArvBin(ArvBin *raiz) {
     if (*raiz != NULL) {
         libera_NO(*raiz);
     }
-    free(raiz);
+    free(*raiz);
 }
 
-void exibe_inOrder(ArvBin* raiz) {
-
-    if (*raiz == NULL) {
+void exibe_inOrder(ArvBin raiz) {
+    if (raiz == NULL) {
         return;
     }
-    exibe_inOrder(&((*raiz)->esq));
-    printf(" - %d ", (*raiz)->num);
-    exibe_inOrder(&((*raiz)->dir));
+    exibe_inOrder(raiz->esq);
+    printf(" - %d ", raiz->num);
+    exibe_inOrder(raiz->dir);
 }
 
-
-int contaNo(ArvBin raiz) {
-    if (raiz == NULL) {
-        return 0;
-    } else {
-        return 1 + contaNo(raiz->esq) + contaNo(raiz->dir);
-    }
-}
-
-int altura(ArvBin raiz) {
-    if (raiz == NULL) {
-        return -1;
-    } else {
-        int esq = altura(raiz->esq);
-        int dir = altura(raiz->dir);
-        if (esq > dir) {
-            return esq + 1;
+ArvBin encontrar(ArvBin raiz, int num) {
+    if (raiz != NULL) {
+        if (num == raiz->num) {
+            printf("\nA poltrona %d ja esta reservada!\n", raiz->num);
         } else {
-            return dir + 1;
+            printf("\nA poltrona %d se encontra disponivel para compra!\n", num);
+        }
+        if (num < raiz->num) {
+            return encontrar(raiz->esq, num);
+        } else if (num > raiz->num) {
+            return encontrar(raiz->dir, num);
         }
     }
-}
-
-ArvBin encontrar(ArvBin *raiz, int num) {
-    if (*raiz) {
-        if (num == (*raiz)->num) {
-            printf("\nA poltrona %d ja esta reservada!\n", (*raiz)->num);
-        } else {
-        printf("\nA poltrona %d se encontra disponivel para compra!\n", num);
-        }
-        if (num < (*raiz)->num) {
-            return encontrar(&((*raiz)->esq), num);
-        }else if (num > (*raiz)->num) {
-            return encontrar(&((*raiz)->dir), num);
-        } 
-    }
-    return *raiz;
+    return raiz;
 }
 
 void deletar(ArvBin *raiz) {
@@ -213,6 +189,134 @@ void deletar(ArvBin *raiz) {
     printf("Compra cancelada com sucesso!\n\n");
 }
 
+struct Node {
+    int num;
+    struct Node *prox;
+    struct Node *ant;
+};
+
+typedef struct Node node;
+typedef node *LISTA;
+
+LISTA insereFinal(LISTA lista, int num) {
+    node *novo = (node *)malloc(sizeof(node));
+    if (novo == NULL) {
+        printf("Erro de alocacao...\n");
+        exit(0);
+    }
+
+    novo->num = num;
+
+    node *tmp;
+    tmp = lista;
+    novo->prox = NULL;
+
+    if (lista == NULL) {
+        return novo;
+    } else {
+        while (tmp->prox != NULL) {
+            tmp = tmp->prox;
+        }
+        tmp->prox = novo;
+        novo->ant = tmp;
+        return lista;
+    }
+}
+
+void exibeLista(LISTA lista) {
+    if (lista == NULL) {
+        printf("LISTA VAZIA");
+    } else {
+        node *tmp;
+        tmp = lista;
+        while (tmp != NULL) {
+            printf(" - %d ", tmp->num);
+            tmp = tmp->prox;
+        }
+    }
+}
+
+void liberar(LISTA lista) {
+    if (lista == NULL) {
+        printf("LISTA VAZIA");
+    } else {
+        node *tmp;
+
+        while (lista != NULL) {
+            tmp = lista;
+            lista = lista->prox;
+            free(tmp);
+        }
+    }
+}
+
+LISTA copiaParaLista(ArvBin raiz, LISTA lista) {
+    if (raiz != NULL) {
+        lista = copiaParaLista(raiz->esq, lista);
+        lista = insereFinal(lista, raiz->num);
+        lista = copiaParaLista(raiz->dir, lista);
+    }
+    return lista;
+}
+
+
+ArvBin criarNo(int num) {
+    ArvBin novo = (ArvBin)malloc(sizeof(no));
+    if (novo != NULL) {
+        novo->num = num;
+        novo->esq = NULL;
+        novo->dir = NULL;
+    } else {
+        printf("Erro de alocação...");
+        exit(0);
+    }
+    return novo;
+}
+
+ArvBin construirArvoreBalanceada(int *array, int inicio, int fim) {
+    if (inicio > fim) {
+        return NULL;
+    }
+
+    int meio = (inicio + fim) / 2;
+    ArvBin raiz = criarNo(array[meio]);
+
+    raiz->esq = construirArvoreBalanceada(array, inicio, meio - 1);
+    raiz->dir = construirArvoreBalanceada(array, meio + 1, fim);
+
+    return raiz;
+}
+
+ArvBin reconstruirBalanceada(LISTA lista) {
+    if (lista == NULL) {
+        return NULL;
+    }
+
+    int count = 0;
+    node *tmp = lista;
+    while (tmp != NULL) {
+        count++;
+        tmp = tmp->prox;
+    }
+
+    int *array = (int *)malloc(count * sizeof(int));
+    tmp = lista;
+    for (int i = 0; i < count; i++) {
+        array[i] = tmp->num;
+        tmp = tmp->prox;
+    }
+
+    return construirArvoreBalanceada(array, 0, count - 1);
+}
+
+void balancear(ArvBin *raiz){
+    LISTA lista = NULL;
+    lista = copiaParaLista(*raiz, lista);
+
+    *raiz = reconstruirBalanceada(lista);   
+    printf("Arvore balanceada com sucesso!\n");
+}
+
 int main() {
     ArvBin raiz = criarArvore();
 
@@ -227,6 +331,7 @@ int main() {
         printf("3 - Buscar poltrona\n");
         printf("4 - Editar poltrona\n");
         printf("5 - Cancelar compra\n");
+        // printf("7 - Teste de balanceamento\n");
         printf("0 - Encerrar\n");
         scanf("%d", &op);
 
@@ -241,25 +346,34 @@ int main() {
             case 2:
                 system(clear);
                 printf("--- INGRESSOS VENDIDOS ---\n\n");
-                exibe_inOrder(&raiz);
+                exibe_inOrder(raiz);
                 printf("\n\n");
+                balancear(&raiz);
                 system(pause);
                 break;
             case 3:
                 system(clear);
                 printf("Digite o numero que deseja buscar: ");
                 scanf("%d", &num);
-                encontrar(&raiz, num);
+                encontrar(raiz, num);
+                balancear(&raiz);
                 system(pause);
                 break;
             case 4:
                 system(clear);
                 // Implementar função de editar poltronas - excluir e adicionar, arrumar campos de texto
+                balancear(&raiz);
                 system(pause);
                 break;
             case 5:
                 system(clear);
                 deletar(&raiz);
+                balancear(&raiz);
+                system(pause);
+                break;
+            case 7:
+                system(clear);
+                balancear(&raiz);
                 system(pause);
                 break;
             default:
