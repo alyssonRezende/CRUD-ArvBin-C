@@ -143,19 +143,30 @@ int altura(ArvBin raiz){
 }
 
 ArvBin encontrar(ArvBin raiz, int num) {
+    if(num <= 0 || num > 100){
+        printf("\n\e[0;31mIngresso indisponivel,\e[0m escolha uma poltrona de 1 a 100!\n\n");
+        return NULL;
+    }
+
     if (raiz != NULL) {
-        if (num == raiz->num) {
-            printf( RED "\nA poltrona %d ja esta reservada!\n" COLOR_RESET, raiz->num);
-        } else {
-            printf( GRN "\nA poltrona %d se encontra disponivel para compra!\n" COLOR_RESET, num);
-        }
-        if (num < raiz->num) {
+        
+    
+    
+    if (num < raiz->num) {
             return encontrar(raiz->esq, num);
         } else if (num > raiz->num) {
             return encontrar(raiz->dir, num);
         }
+        if (num == raiz->num) {
+            printf( RED "\nA poltrona %d ja esta reservada!\n" COLOR_RESET, raiz->num);
+            return raiz;
+        
+    }else {
+        printf( GRN "\nA poltrona %d esta disponivel para compra!\n" COLOR_RESET, num);
+        return raiz;
     }
     return raiz;
+}
 }
 
 void deletar(ArvBin *raiz) {
@@ -341,7 +352,7 @@ ArvBin criarNo(int num) {
 
 int estaBalanceada(ArvBin *raiz) {
     int highDif = altura((*raiz)->dir) - altura((*raiz)->esq);
-    printf("A diferenca de altura das sub-arvores e de: %d\n", highDif);
+    // printf("A diferenca de altura das sub-arvores e de: %d\n", highDif);
     if(highDif < (-1) || highDif > 1)
         return 0;
     return 1;
@@ -388,7 +399,7 @@ void balancear(ArvBin *raiz){
     lista = copiaParaLista(*raiz, lista);
 
     *raiz = reconstruirBalanceada(lista);   
-    printf( GRN "Arvore balanceada com sucesso!\n" COLOR_RESET );
+    // printf( GRN "Arvore balanceada com sucesso!\n" COLOR_RESET );
 }
 
 /*------------------- OUTROS MÉTODOS E MAIN ----------------------*/
@@ -537,10 +548,10 @@ int main() {
         printf("3 - Buscar poltrona\n");
         printf("4 - Editar poltrona\n");
         printf("5 - Cancelar compra\n");
-        printf("7 - Teste de balanceamento\n");
-        printf("8 - Exibe preOrdem\n");
-        printf("9 - Exibe inOrdem\n");
-        printf("10 - Exibe posOrdem\n");
+        // printf("7 - Teste de balanceamento\n");
+        // printf("8 - Exibe preOrdem\n");
+        // printf("9 - Exibe inOrdem\n");
+        // printf("10 - Exibe posOrdem\n");
         printf("0 - Encerrar\n");
         scanf("%d", &op);
 
@@ -571,11 +582,15 @@ int main() {
             case 4:
                 system(clear);
                 editarPoltrona(&raiz);
+                if(!estaBalanceada(&raiz)) 
+                    balancear(&raiz);
                 system(pause);
                 break;
             case 5:
                 system(clear);
                 deletar(&raiz);
+                if(!estaBalanceada(&raiz)) 
+                    balancear(&raiz);
                 system(pause); 
                 break;
             case 7:
@@ -606,6 +621,8 @@ int main() {
                 break;
             default:
                 printf(RED "Numero invalido" COLOR_RESET);
+                
+
         }
     } while (op != 0);
 
