@@ -3,7 +3,7 @@
 
 #ifdef _WIN32
     #define clear "cls"
-    #define pause pause
+    #define pause "pause"
 #elif __linux__
     #define clear "clear"
     #define pause "read -p 'Pressione enter para continuar...' var"
