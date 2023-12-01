@@ -104,7 +104,7 @@ void exibe_preOrder(ArvBin* raiz) {
     if (*raiz == NULL) {
         return;
     }
-    printf("%d\n", (*raiz)->num);
+    printf(" - %d ", (*raiz)->num);
     exibe_preOrder(&((*raiz)->esq));
     exibe_preOrder(&((*raiz)->dir));
 }
@@ -124,7 +124,7 @@ void exibe_posOrder(ArvBin* raiz) {
     }
     exibe_posOrder(&((*raiz)->esq));
     exibe_posOrder(&((*raiz)->dir));
-    printf("%d\n", (*raiz)->num);
+    printf(" - %d ", (*raiz)->num);
 }
 
 int altura(ArvBin raiz){
@@ -230,6 +230,26 @@ void deletar(ArvBin *raiz) {
     printf( GRN "Compra cancelada com sucesso!\n\n" COLOR_RESET );
 }
 
+void espacamento(char ch, int n){
+  int i;
+  for (i = 0; i < n; i++)
+    putchar (ch);
+}
+
+void displayArvBin (ArvBin raiz, int nivel){
+  int i;
+
+  if(raiz == NULL) {
+    espacamento ('\t', nivel);
+    puts ("NULL");
+  }
+  else {
+    displayArvBin(raiz->dir, nivel + 1);
+    espacamento ('\t', nivel);
+    printf ("%d\n", raiz->num);
+    displayArvBin (raiz->esq, nivel + 1);
+  }
+}
 
 /*-------------- ESTRUTURA PARA LISTA DE BALANCEAMENTO ESTÁTICO --------------*/ 
 
@@ -568,16 +588,19 @@ int main() {
                 break;
             case 8:
                 system(clear);
+                displayArvBin(raiz, 0);
                 exibe_preOrder(&raiz);
                 system(pause);
                 break;
             case 9:
                 system(clear);
+                displayArvBin(raiz, 0);
                 exibe_inOrder(raiz);
                 system(pause);
                 break;
             case 10:
                 system(clear);
+                displayArvBin(raiz, 0);
                 exibe_posOrder(&raiz);
                 system(pause);
                 break;
